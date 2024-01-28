@@ -1,3 +1,5 @@
 .vscode/
 bin/
 .env
+*.o3D
+*.o2D

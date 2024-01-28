@@ -39,21 +39,20 @@ void initSDL(Env &cfg, App &app) {
         printf("Failed to create renderer: %s\n", SDL_GetError());
         exit(1);
     }
+}
 
-    SDL_UpdateWindowSurface(app.window);
-
-    main_loop(cfg, app);
-
+void killSDL(App &app) {
     SDL_DestroyRenderer(app.renderer);
     SDL_DestroyWindow(app.window);
     SDL_Quit();
 }
 
-void main_loop(Env &cfg, App &app) {
+void main_loop(Env &cfg, App &app, std::vector<Object3D> &objs3D,
+               std::vector<Object2D> &objs2D) {
     bool keep_window_open = true;
     while (keep_window_open) {
         event_loop(keep_window_open);
-        draw(app.renderer);
+        draw(app.renderer, app.window, objs3D, objs2D);
     }
 }
 
@@ -68,12 +67,38 @@ void event_loop(bool &keep_window_open) {
     }
 }
 
-void draw(SDL_Renderer *renderer) {
+void draw(SDL_Renderer *renderer, SDL_Window *window,
+          std::vector<Object3D> &objs3D, std::vector<Object2D> &objs2D) {
+
+    const float scale = 100.0f;
+    int window_size_x = 0, window_size_y = 0;
+    SDL_GetWindowSize(window, &window_size_x, &window_size_y);
+    const float centerX = window_size_x / 2.0f, centerY = window_size_y / 2.0f;
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawLineF(renderer, 0, 0, 100, 100);
+
+    for (Object3D &obj3D : objs3D) {
+        rotate(obj3D, 0, 3.141592 / 1024, 0);
+        Object2D obj2D;
+        project3DTo2D(obj3D, obj2D, 3.0f, centerX, centerY, scale);
+
+        for (const auto &vertex : obj2D.vertices) {
+            const Point2D &start = obj2D.points[vertex.start];
+            const Point2D &end = obj2D.points[vertex.end];
+            SDL_RenderDrawLineF(renderer, start.x, start.y, end.x, end.y);
+        }
+    }
+
+    for (const Object2D &obj2D : objs2D) {
+        for (const auto &vertex : obj2D.vertices) {
+            const Point2D &start = obj2D.points[vertex.start];
+            const Point2D &end = obj2D.points[vertex.end];
+            SDL_RenderDrawLineF(renderer, start.x, start.y, end.x, end.y);
+        }
+    }
 
     SDL_RenderPresent(renderer);
 }
