@@ -5,4 +5,5 @@
 typedef struct {
     SDL_Renderer *renderer;
     SDL_Window *window;
+    SDL_Surface *window_surface;
 } App;

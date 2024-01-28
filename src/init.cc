@@ -3,7 +3,7 @@
 void initSDL(Env &cfg, App &app) {
     int rendererFlags, windowFlags;
 
-    rendererFlags = SDL_RENDERER_ACCELERATED;
+    rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 
     windowFlags = 0;
 
@@ -32,4 +32,48 @@ void initSDL(Env &cfg, App &app) {
         printf("Failed to create renderer: %s\n", SDL_GetError());
         exit(1);
     }
+
+    app.window_surface = SDL_GetWindowSurface(app.window);
+
+    if (!app.window_surface) {
+        printf("Failed to create renderer: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_UpdateWindowSurface(app.window);
+
+    main_loop(cfg, app);
+
+    SDL_DestroyRenderer(app.renderer);
+    SDL_DestroyWindow(app.window);
+    SDL_Quit();
+}
+
+void main_loop(Env &cfg, App &app) {
+    bool keep_window_open = true;
+    while (keep_window_open) {
+        event_loop(keep_window_open);
+        draw(app.renderer);
+    }
+}
+
+void event_loop(bool &keep_window_open) {
+    SDL_Event e;
+    while (SDL_PollEvent(&e) > 0) {
+        switch (e.type) {
+        case SDL_QUIT:
+            keep_window_open = false;
+            break;
+        }
+    }
+}
+
+void draw(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawLineF(renderer, 0, 0, 100, 100);
+
+    SDL_RenderPresent(renderer);
 }

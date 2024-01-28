@@ -11,9 +11,5 @@ int main(int argc, char *argv[]) {
 
     initSDL(cfg, app);
 
-    bool run = true;
-    while (run) {
-    }
-
     return 0;
 }

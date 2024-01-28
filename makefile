@@ -5,8 +5,8 @@ INC_DIR := inc
 BIN_DIR := bin
 SRC_DIR := src
 
-INC := $(INC_DIR)/config.h $(INC_DIR)/init.h $(INC_DIR)/structs.h
-SRC := $(SRC_DIR)/config.cc $(SRC_DIR)/init.cc $(SRC_DIR)/main.cc
+INC := $(INC_DIR)/config.h $(INC_DIR)/init.h $(INC_DIR)/structs.h $(INC_DIR)/utils.h $(INC_DIR)/geometry.h
+SRC := $(SRC_DIR)/utils.cc  $(SRC_DIR)/config.cc $(SRC_DIR)/init.cc $(SRC_DIR)/main.cc
 TARGET := $(BIN_DIR)/render3D
 
 depend:
