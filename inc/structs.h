@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SDL2/SDL.h>
 #include "geometry.h"
+#include <SDL2/SDL.h>
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -10,4 +10,10 @@ typedef struct {
 
     std::vector<Object3D> objs3D;
     std::vector<Object2D> objs2D;
+
+    bool leftMouseButtonDown, rightMouseButtonDown;
+    int initialMouseX, initialMouseY;
+    float zoomLevel;
 } App;
+
+void newApp(App &app);

@@ -62,13 +62,53 @@ void event_loop(bool &keep_window_open, App &app) {
         case SDL_QUIT:
             keep_window_open = false;
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (e.button.button == SDL_BUTTON_LEFT) {
+                app.leftMouseButtonDown = true;
+                app.initialMouseX = e.button.x;
+                app.initialMouseY = e.button.y;
+            } else if (e.button.button == SDL_BUTTON_RIGHT) {
+                app.rightMouseButtonDown = true;
+                app.initialMouseX = e.button.x;
+                app.initialMouseY = e.button.y;
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if (e.button.button == SDL_BUTTON_LEFT) {
+                app.leftMouseButtonDown = false;
+            } else if (e.button.button == SDL_BUTTON_RIGHT) {
+                app.rightMouseButtonDown = false;
+            }
+            break;
+        case SDL_MOUSEMOTION:
+            if (app.leftMouseButtonDown) {
+                float rx = (e.motion.y - app.initialMouseY) * 0.01f;
+                float ry = (e.motion.x - app.initialMouseX) * 0.01f;
+                for (Object3D &obj3D : app.objs3D) {
+                    rotate(obj3D, rx, -ry, 0.0f);
+                }
+            } else if (app.rightMouseButtonDown) {
+                float dx = (e.motion.x - app.initialMouseX) * 0.01f;
+                float dy = (e.motion.y - app.initialMouseY) * 0.01f;
+                for (Object3D &obj3D : app.objs3D) {
+                    translate(obj3D, dx, dy, 0.0f);
+                }
+            }
+            app.initialMouseX = e.motion.x;
+            app.initialMouseY = e.motion.y;
+            break;
+        case SDL_MOUSEWHEEL:
+            if (e.wheel.y > 0) {
+                app.zoomLevel *= 1.1f;
+            } else if (e.wheel.y < 0) {
+                app.zoomLevel /= 1.1f;
+            }
+            break;
         }
     }
 }
 
 void draw(SDL_Renderer *renderer, SDL_Window *window, App &app) {
-
-    const float scale = 100.0f;
     int window_size_x = 0, window_size_y = 0;
     SDL_GetWindowSize(window, &window_size_x, &window_size_y);
     const float centerX = window_size_x / 2.0f, centerY = window_size_y / 2.0f;
@@ -80,7 +120,7 @@ void draw(SDL_Renderer *renderer, SDL_Window *window, App &app) {
 
     for (Object3D &obj3D : app.objs3D) {
         Object2D obj2D;
-        project3DTo2D(obj3D, obj2D, 5.0f, centerX, centerY, scale);
+        project3DTo2D(obj3D, obj2D, 5.0f, centerX, centerY, app.zoomLevel);
 
         for (const auto &vertex : obj2D.vertices) {
             const Point2D &start = obj2D.points[vertex.start];

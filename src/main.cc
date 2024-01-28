@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     newConfig(cfg);
 
     App app;
-    memset(&app, 0, sizeof(App));
+    newApp(app);
 
     loadObjs(app.objs2D, app.objs3D, argc, argv);
 
