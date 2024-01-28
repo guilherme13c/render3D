@@ -9,10 +9,8 @@ void initSDL(Env &cfg, App &app);
 
 void killSDL(App &app);
 
-void main_loop(Env &cfg, App &app, std::vector<Object3D> &objs3D,
-               std::vector<Object2D> &objs2D);
+void main_loop(Env &cfg, App &app);
 
-void event_loop(bool &keep_window_open);
+void event_loop(bool &keep_window_open, App &app);
 
-void draw(SDL_Renderer *renderer, SDL_Window *window,
-          std::vector<Object3D> &objs3D, std::vector<Object2D> &objs2D);
+void draw(SDL_Renderer *renderer, SDL_Window *window, App &app);

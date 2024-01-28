@@ -230,3 +230,11 @@ void rotateZ(float &x, float &y, float angle) {
     x = tempX;
     y = tempY;
 };
+
+void translate(Object3D &obj, const float dx, const float dy, const float dz) {
+    for (Point3D &point : obj.points) {
+        point.x += dx;
+        point.y += dy;
+        point.z += dz;
+    }
+}

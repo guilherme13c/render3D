@@ -46,3 +46,5 @@ void rotate(Object3D &obj, const float rx, const float ry, const float rz);
 void rotateX(float &y, float &z, float angle);
 void rotateY(float &x, float &z, float angle);
 void rotateZ(float &x, float &y, float angle);
+
+void translate(Object3D &obj, const float dx, const float dy, const float dz);

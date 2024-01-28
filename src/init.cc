@@ -47,16 +47,15 @@ void killSDL(App &app) {
     SDL_Quit();
 }
 
-void main_loop(Env &cfg, App &app, std::vector<Object3D> &objs3D,
-               std::vector<Object2D> &objs2D) {
+void main_loop(Env &cfg, App &app) {
     bool keep_window_open = true;
     while (keep_window_open) {
-        event_loop(keep_window_open);
-        draw(app.renderer, app.window, objs3D, objs2D);
+        event_loop(keep_window_open, app);
+        draw(app.renderer, app.window, app);
     }
 }
 
-void event_loop(bool &keep_window_open) {
+void event_loop(bool &keep_window_open, App &app) {
     SDL_Event e;
     while (SDL_PollEvent(&e) > 0) {
         switch (e.type) {
@@ -67,8 +66,7 @@ void event_loop(bool &keep_window_open) {
     }
 }
 
-void draw(SDL_Renderer *renderer, SDL_Window *window,
-          std::vector<Object3D> &objs3D, std::vector<Object2D> &objs2D) {
+void draw(SDL_Renderer *renderer, SDL_Window *window, App &app) {
 
     const float scale = 100.0f;
     int window_size_x = 0, window_size_y = 0;
@@ -80,10 +78,9 @@ void draw(SDL_Renderer *renderer, SDL_Window *window,
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    for (Object3D &obj3D : objs3D) {
-        rotate(obj3D, 0, 3.141592 / 1024, 0);
+    for (Object3D &obj3D : app.objs3D) {
         Object2D obj2D;
-        project3DTo2D(obj3D, obj2D, 3.0f, centerX, centerY, scale);
+        project3DTo2D(obj3D, obj2D, 5.0f, centerX, centerY, scale);
 
         for (const auto &vertex : obj2D.vertices) {
             const Point2D &start = obj2D.points[vertex.start];
@@ -92,7 +89,7 @@ void draw(SDL_Renderer *renderer, SDL_Window *window,
         }
     }
 
-    for (const Object2D &obj2D : objs2D) {
+    for (const Object2D &obj2D : app.objs2D) {
         for (const auto &vertex : obj2D.vertices) {
             const Point2D &start = obj2D.points[vertex.start];
             const Point2D &end = obj2D.points[vertex.end];
