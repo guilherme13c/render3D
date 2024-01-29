@@ -5,8 +5,8 @@ void newApp(App &app) {
     app.window = nullptr;
     app.window_surface = nullptr;
 
-    app.objs2D = std::vector<Object2D>();
-    app.objs3D = std::vector<Object3D>();
+    app.objs2D = std::vector<Object2D>(0);
+    app.objs3D = std::vector<Object3D>(0);
 
     app.leftMouseButtonDown = false;
     app.rightMouseButtonDown = false;
