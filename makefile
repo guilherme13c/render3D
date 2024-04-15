@@ -9,6 +9,8 @@ INC := $(INC_DIR)/geometry.h $(INC_DIR)/config.h $(INC_DIR)/init.h $(INC_DIR)/st
 SRC :=  $(SRC_DIR)/geometry.cc $(SRC_DIR)/config.cc $(SRC_DIR)/init.cc $(SRC_DIR)/structs.cc $(SRC_DIR)/utils.cc  $(SRC_DIR)/main.cc
 TARGET := $(BIN_DIR)/render3D
 
+$(shell mkdir data bin inc src -p)
+
 depend:
 	sudo apt-get install libsdl2-dev
 
