@@ -13,7 +13,7 @@ void saveObj3D(const Object3D &obj, const std::string filename) {
         exit(1);
     }
 
-    std::ofstream fs(filename, std::ios_base::binary);
+    std::ofstream fs(filename);
     if (!fs.is_open()) {
         std::cerr << "ERROR: Failed to save 3D object:\tcould not open file: "
                   << filename << std::endl;
@@ -23,21 +23,14 @@ void saveObj3D(const Object3D &obj, const std::string filename) {
     uint16_t n_points = obj.points.size();
     uint16_t n_vertices = obj.vertices.size();
 
-    fs.write("3Dobj", 5);
-
-    fs.write(reinterpret_cast<char *>(&n_points), sizeof(uint16_t));
-    fs.write(reinterpret_cast<char *>(&n_vertices), sizeof(uint16_t));
+    fs << n_points << " " << n_vertices << "\n";
 
     for (const Point3D &point : obj.points) {
-        fs.write(reinterpret_cast<const char *>(&point.x), sizeof(float));
-        fs.write(reinterpret_cast<const char *>(&point.y), sizeof(float));
-        fs.write(reinterpret_cast<const char *>(&point.z), sizeof(float));
+        fs << point.x << " " << point.y << " " << point.z << "\n";
     }
 
     for (const auto &vertex : obj.vertices) {
-        fs.write(reinterpret_cast<const char *>(&vertex.start),
-                 sizeof(uint16_t));
-        fs.write(reinterpret_cast<const char *>(&vertex.end), sizeof(uint16_t));
+        fs << vertex.start << " " << vertex.end << "\n";
     }
 
     fs.close();
@@ -56,7 +49,7 @@ void saveObj2D(const Object2D &obj, const std::string filename) {
         exit(1);
     }
 
-    std::ofstream fs(filename, std::ios_base::binary);
+    std::ofstream fs(filename);
     if (!fs.is_open()) {
         std::cerr << "ERROR: Failed to save 2D object:\tcould not open file: "
                   << filename << std::endl;
@@ -66,97 +59,64 @@ void saveObj2D(const Object2D &obj, const std::string filename) {
     uint16_t n_points = obj.points.size();
     uint16_t n_vertices = obj.vertices.size();
 
-    fs.write("2Dobj", 5);
-
-    fs.write(reinterpret_cast<char *>(&n_points), sizeof(uint16_t));
-    fs.write(reinterpret_cast<char *>(&n_vertices), sizeof(uint16_t));
+    fs << n_points << " " << n_vertices << "\n";
 
     for (const auto &point : obj.points) {
-        fs.write(reinterpret_cast<const char *>(&point.x), sizeof(float));
-        fs.write(reinterpret_cast<const char *>(&point.y), sizeof(float));
+        fs << point.x << " " << point.y << "\n";
     }
 
     for (const auto &vertex : obj.vertices) {
-        fs.write(reinterpret_cast<const char *>(&vertex.start),
-                 sizeof(uint16_t));
-        fs.write(reinterpret_cast<const char *>(&vertex.end), sizeof(uint16_t));
+        fs << vertex.start << " " << vertex.end << "\n";
     }
 
     fs.close();
 }
 
 void loadObj3D(Object3D &obj, const std::string filename) {
-    std::ifstream fs(filename, std::ios_base::binary);
+    std::ifstream fs(filename);
     if (!fs.is_open()) {
         std::cerr << "ERROR: Failed to load 3D object:\tcould not open file: "
                   << filename << std::endl;
         exit(1);
     }
 
-    char header[6];
-    fs.read(header, 5);
-    header[5] = '\0';
-
-    if (std::string(header) != "3Dobj") {
-        std::cerr << "ERROR: Invalid file format for 3D object: " << filename
-                  << std::endl;
-        exit(1);
-    }
-
     uint16_t n_points, n_vertices;
-    fs.read(reinterpret_cast<char *>(&n_points), sizeof(uint16_t));
-    fs.read(reinterpret_cast<char *>(&n_vertices), sizeof(uint16_t));
+    fs >> n_points >> n_vertices;
 
     obj.points.resize(n_points);
     obj.vertices.resize(n_vertices);
 
     for (auto &point : obj.points) {
-        fs.read(reinterpret_cast<char *>(&point.x), sizeof(float));
-        fs.read(reinterpret_cast<char *>(&point.y), sizeof(float));
-        fs.read(reinterpret_cast<char *>(&point.z), sizeof(float));
+        fs >> point.x >> point.y >> point.z;
     }
 
     for (auto &vertex : obj.vertices) {
-        fs.read(reinterpret_cast<char *>(&vertex.start), sizeof(uint16_t));
-        fs.read(reinterpret_cast<char *>(&vertex.end), sizeof(uint16_t));
+        fs >> vertex.start >> vertex.end;
     }
 
     fs.close();
 }
 
 void loadObj2D(Object2D &obj, const std::string filename) {
-    std::ifstream fs(filename, std::ios_base::binary);
+    std::ifstream fs(filename);
     if (!fs.is_open()) {
         std::cerr << "ERROR: Failed to load 2D object:\tcould not open file: "
                   << filename << std::endl;
         exit(1);
     }
 
-    char header[6];
-    fs.read(header, 5);
-    header[5] = '\0';
-
-    if (std::string(header) != "2Dobj") {
-        std::cerr << "ERROR: Invalid file format for 2D object: " << filename
-                  << std::endl;
-        exit(1);
-    }
-
     uint16_t n_points, n_vertices;
-    fs.read(reinterpret_cast<char *>(&n_points), sizeof(uint16_t));
-    fs.read(reinterpret_cast<char *>(&n_vertices), sizeof(uint16_t));
+    fs >> n_points >> n_vertices;
 
     obj.points.resize(n_points);
     obj.vertices.resize(n_vertices);
 
     for (auto &point : obj.points) {
-        fs.read(reinterpret_cast<char *>(&point.x), sizeof(float));
-        fs.read(reinterpret_cast<char *>(&point.y), sizeof(float));
+        fs >> point.x >> point.y;
     }
 
     for (auto &vertex : obj.vertices) {
-        fs.read(reinterpret_cast<char *>(&vertex.start), sizeof(uint16_t));
-        fs.read(reinterpret_cast<char *>(&vertex.end), sizeof(uint16_t));
+        fs >> vertex.start >> vertex.end;
     }
 
     fs.close();
