@@ -122,6 +122,22 @@ void draw(SDL_Renderer *renderer, SDL_Window *window, App &app) {
         Object2D obj2D;
         project3DTo2D(obj3D, obj2D, 5.0f, centerX, centerY, app.zoomLevel);
 
+        for (const Point2D &p : obj2D.points) {
+            SDL_RenderDrawPointF(renderer, p.x, p.y);
+        }
+
+        for (const Vertex &vertex : obj2D.vertices) {
+            const Point2D &start = obj2D.points[vertex.start];
+            const Point2D &end = obj2D.points[vertex.end];
+            SDL_RenderDrawLineF(renderer, start.x, start.y, end.x, end.y);
+        }
+    }
+
+    for (Object2D &obj2D : app.objs2D) {
+        for (const Point2D &p : obj2D.points) {
+            SDL_RenderDrawPointF(renderer, p.x, p.y);
+        }
+
         for (const Vertex &vertex : obj2D.vertices) {
             const Point2D &start = obj2D.points[vertex.start];
             const Point2D &end = obj2D.points[vertex.end];
